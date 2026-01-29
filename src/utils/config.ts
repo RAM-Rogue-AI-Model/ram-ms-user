@@ -1,4 +1,7 @@
 import { configType } from '../types/config';
+import dotenv from "dotenv"
+
+dotenv.config()
 
 const config: configType = {
   PORT: Number(process.env.PORT ?? 3002),

@@ -7,8 +7,6 @@ import { UserService } from './services/UserService';
 import { UserController } from './controllers/UserController';
 import { UserRouter } from './routes/UserRouter';
 
-dotenv.config();
-
 const app = express();
 const port = config.PORT;
 
