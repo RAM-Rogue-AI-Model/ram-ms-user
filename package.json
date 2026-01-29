@@ -10,7 +10,9 @@
     "start": "node dist/app.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "fixer": "pnpm format && pnpm lint --fix"
+    "fixer": "pnpm format && pnpm lint --fix",
+    "prisma:generate": "prisma generate",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -30,8 +32,11 @@
     "typescript-eslint": "^8.54.0"
   },
   "dependencies": {
+    "@prisma/adapter-mariadb": "^7.3.0",
+    "@prisma/client": "^7.3.0",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "prisma": "^7.3.0"
   }
 }

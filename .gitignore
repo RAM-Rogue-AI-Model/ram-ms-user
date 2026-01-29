@@ -3,3 +3,5 @@ dist
 
 # Fichiers d'environnement
 *.env*
+/generated/prisma
+.idea
