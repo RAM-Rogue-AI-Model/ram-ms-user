@@ -2,26 +2,29 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import 'dotenv/config';
+import { config } from './utils/config';
+import { UserService } from './services/UserService';
+import { UserController } from './controllers/UserController';
+import { UserRouter } from './routes/UserRouter';
 
-(() => {
-  dotenv.config();
+dotenv.config();
 
-  const app = express();
-  const port = process.env.PORT ?? 3002;
+const app = express();
+const port = config.PORT;
 
-  app.use(
-    cors({
-      origin: [process.env.CLIENT_URL ?? 'http://localhost:3000'],
-      credentials: true,
-    })
-  );
+app.use(
+  cors({
+    origin: [config.API_GATEWAY_URL],
+    credentials: true,
+  })
+);
 
-  app.get('/', (req: Request, res: Response) => {
-    res.send('Hello World!');
-  });
+const userService = new UserService();
+const userController = new UserController(userService);
 
-  app.listen(port, () => {
-    // eslint-disable-next-line no-console
-    console.log(`Server is running on port ${port}`);
-  });
-})();
+app.use('/users', new UserRouter(userController).router);
+
+app.listen(port, () => {
+  // eslint-disable-next-line no-console
+  console.log(`Server is running on port ${port}`);
+});
