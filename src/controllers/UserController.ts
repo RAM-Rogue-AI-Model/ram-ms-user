@@ -45,10 +45,11 @@ class UserController {
       res.status(400).send({ message: 'Different password' });
     } else {
       try {
-        const users = await this.service.findByUsenrame(username);
+        const users = await this.service.findByUsername(username);
 
         if (users.length > 0) {
           res.status(400).send({ message: 'Username already used' });
+          return;
         }
 
         bcrypt.hash(password, config.SALT_ROUNDS, async (err, hash) => {
@@ -92,6 +93,67 @@ class UserController {
         res.status(500).send({ message: err });
         return;
       }
+    }
+  }
+
+  async login(req: Request, res: Response) {
+    const body = req.body as Partial<RegisterUserBody>;
+    if (!body.username || !body.password) {
+      res.status(400).send({ message: 'Bad request' });
+      return;
+    }
+
+    const username = body.username.trim();
+    const password = body.password.trim();
+    try {
+      const users = await this.service.findByUsername(username);
+
+      if (users.length === 0) {
+        res.status(400).send({ message: "User doesn't exist" });
+        return;
+      } else if (users.length > 1) {
+        res.status(500).send({ message: 'Multiple users with same username' });
+        return;
+      }
+
+      const user = users[0];
+
+      bcrypt.compare(password, user.password, (err, match) => {
+        if (err) {
+          res.sendStatus(500);
+          return;
+        }
+
+        if (!match) {
+          res.sendStatus(401);
+          return;
+        }
+
+        this.generateToken(
+          user.id,
+          user.username,
+          user.isAdmin,
+          (err, token) => {
+            if (err) {
+              res.sendStatus(500);
+              return;
+            }
+
+            res.json({
+              token: token,
+              user: {
+                id: user.isAdmin,
+                username: user.username,
+                isAdmin: user.isAdmin,
+              },
+            });
+          }
+        );
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ message: err });
+      return;
     }
   }
 }

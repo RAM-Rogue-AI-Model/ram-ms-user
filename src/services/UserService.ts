@@ -11,7 +11,7 @@ class UserService {
     return prisma.user.findMany();
   }
 
-  async findByUsenrame(_username: string) {
+  async findByUsername(_username: string) {
     const username = _username.trim();
     return prisma.user.findMany({
       where: {
