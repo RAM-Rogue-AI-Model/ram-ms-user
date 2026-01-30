@@ -16,6 +16,7 @@ const config: configType = {
 
   SALT_ROUNDS: process.env.SALT_ROUNDS ? Number(process.env.SALT_ROUNDS) : 100,
   JWT_SECRET: process.env.JWT_SECRET ?? 'ram-user-secret-jwt-token',
+  INTERNAL_SECRET: process.env.INTERNAL_SECRET ?? 'internal_secret',
 };
 
 export { config };

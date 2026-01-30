@@ -10,6 +10,7 @@ interface configType {
 
   SALT_ROUNDS: number;
   JWT_SECRET: string;
+  INTERNAL_SECRET: string;
 }
 
 export { configType };
