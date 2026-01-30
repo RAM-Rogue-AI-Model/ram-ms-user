@@ -8,7 +8,7 @@ interface CreateUserInput {
 interface RegisterUserBody {
   username: string;
   password: string;
-  confirmPassword: string;
+  confirmPassword?: string;
 }
 
 export { CreateUserInput, RegisterUserBody };
