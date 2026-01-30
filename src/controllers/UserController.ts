@@ -14,7 +14,7 @@ class UserController {
   }
 
   generateToken(
-    userId: number,
+    userId: string,
     username: string,
     isAdmin: boolean,
     cb: SignCallback
@@ -155,6 +155,54 @@ class UserController {
       res.status(500).send({ message: err });
       return;
     }
+  }
+
+  async getOne(req: Request, res: Response) {
+    try {
+      const id: string = req.params.id as string;
+      const user = await this.service.getById(id);
+      if (!user) {
+        res.sendStatus(404);
+        return;
+      }
+      res.json(user);
+    } catch {
+      {
+        res.sendStatus(500);
+        return;
+      }
+    }
+  }
+
+  async update(req: Request, res: Response) {
+    const id: string = req.params.id as string;
+    const body = req.body as Partial<CreateUserInput>;
+    if (!id) {
+      return res.status(400).json({ error: 'Missing user id' });
+    }
+    const userExists = await this.service.getById(id);
+    if (!userExists) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    if (!body.username || !body.password) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    const payload: CreateUserInput = body as CreateUserInput;
+    const updatedUser = await this.service.update(id, payload);
+    res.json(updatedUser);
+  }
+
+  async delete(req: Request, res: Response) {
+    const id: string = req.params.id as string;
+    if (!id) {
+      return res.status(400).json({ error: 'Missing user id' });
+    }
+    await this.service.delete(id);
+    res.status(204).send();
+  }
+
+  async list(req: Request, res: Response) {
+
   }
 }
 

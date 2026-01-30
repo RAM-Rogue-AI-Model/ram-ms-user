@@ -8,7 +8,11 @@ class UserRouter {
 
   constructor(userController: UserController) {
     this.router = express.Router();
-
+    this.router
+      .route('/')
+      .get(authenticate, async (req: Request, res: Response) => {
+        await userController.list(req, res);
+      });
     this.router
       .route('/register')
       .post(
@@ -28,6 +32,18 @@ class UserRouter {
           await userController.login(req, res);
         }
       );
+    this.router
+      .route('/:id')
+      .post(authenticate, async (req: Request, res: Response) => {
+        await userController.getOne(req, res);
+      })
+      .put(authenticate, async (req: Request, res: Response) => {
+        await userController.update(req, res);
+      })
+      .delete(authenticate, async (req: Request, res: Response) => {
+        await userController.delete(req, res);
+      })
+
   }
 }
 

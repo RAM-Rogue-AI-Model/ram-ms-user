@@ -10,12 +10,36 @@ class UserService {
   async list() {
     return prisma.user.findMany();
   }
-
   async findByUsername(_username: string) {
     const username = _username.trim();
     return prisma.user.findMany({
       where: {
         username: username,
+      },
+    });
+  }
+
+  async getById(id: string) {
+    return prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  async update(id: string, data: CreateUserInput) {
+    const dataSecured: CreateUserInput = { ...data };
+    return prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: dataSecured,
+    });
+  }
+  async delete(id: string) {
+    return prisma.user.delete({
+      where: {
+        id: id,
       },
     });
   }
