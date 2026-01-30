@@ -1,11 +1,12 @@
-import cors from 'cors';
-import dotenv from 'dotenv';
-import express, { Request, Response } from 'express';
 import 'dotenv/config';
-import { config } from './utils/config';
-import { UserService } from './services/UserService';
+
+import cors from 'cors';
+import express from 'express';
+
 import { UserController } from './controllers/UserController';
 import { UserRouter } from './routes/UserRouter';
+import { UserService } from './services/UserService';
+import { config } from './utils/config';
 
 const app = express();
 const port = config.PORT;
@@ -20,7 +21,7 @@ app.use(
 const userService = new UserService();
 const userController = new UserController(userService);
 
-app.use('/users', new UserRouter(userController).router);
+app.use('/user', new UserRouter(userController).router);
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
