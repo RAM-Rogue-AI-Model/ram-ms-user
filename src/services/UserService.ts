@@ -15,7 +15,7 @@ class UserService {
     const username = _username.trim();
     return prisma.user.findMany({
       where: {
-        username: { equals: username },
+        username: username,
       },
     });
   }

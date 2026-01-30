@@ -46,6 +46,7 @@ class UserController {
     } else {
       try {
         const users = await this.service.findByUsenrame(username);
+
         if (users.length > 0) {
           res.status(400).send({ message: 'Username already used' });
         }

@@ -11,6 +11,8 @@ import { config } from './utils/config';
 const app = express();
 const port = config.PORT;
 
+app.use(express.json());
+
 app.use(
   cors({
     origin: [config.API_GATEWAY_URL],
