@@ -18,5 +18,5 @@ model User {
   username         String   @unique
   password         String
   isAdmin          Boolean  @default(false)
-  registrationDate DateTime @default(now())
+  registration_date DateTime @default(now())
 }
