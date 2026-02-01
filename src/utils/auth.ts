@@ -10,7 +10,6 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
 
   if (secret) {
     if (secret === INTERNAL_SECRET) {
-      // req.user = user;
       next();
     } else res.sendStatus(401);
   } else {
