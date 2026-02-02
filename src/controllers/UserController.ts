@@ -171,10 +171,8 @@ class UserController {
       }
       res.json(user);
     } catch {
-      {
-        res.sendStatus(500);
-        return;
-      }
+      res.sendStatus(500);
+      return;
     }
   }
 
@@ -251,24 +249,24 @@ class UserController {
           res.sendStatus(401);
           return;
         }
-      });
 
-      const newPassword = body.password.trim();
-      const confirmPassword = body.confirmPassword.trim();
+        const newPassword = body.newPassword.trim();
+        const confirmPassword = body.confirmPassword.trim();
 
-      if (newPassword.length < 8 || newPassword !== confirmPassword) {
-        res.sendStatus(400);
-        return;
-      }
-
-      bcrypt.hash(newPassword, config.SALT_ROUNDS, async (err, hash) => {
-        if (err) {
-          res.sendStatus(500);
+        if (newPassword.length < 8 || newPassword !== confirmPassword) {
+          res.sendStatus(400);
           return;
         }
 
-        await this.service.update(id, { password: hash });
-        res.sendStatus(200);
+        bcrypt.hash(newPassword, config.SALT_ROUNDS, async (err, hash) => {
+          if (err) {
+            res.sendStatus(500);
+            return;
+          }
+
+          await this.service.update(id, { password: hash });
+          res.sendStatus(200);
+        });
       });
     } catch (err) {
       console.error(err);
