@@ -30,24 +30,24 @@ class UserRouter {
       );
 
     this.router
-      .route('/rename')
-      .patch(authenticate, async (req: Request, res: Response) => {
-        await userController.rename(req, res);
-      });
-
-    this.router
-      .route('/password')
-      .patch(authenticate, async (req: Request, res: Response) => {
-        await userController.changePassword(req, res);
-      });
-
-    this.router
       .route('/:id')
       .post(authenticate, async (req: Request, res: Response) => {
         await userController.findOne(req, res);
       })
       .delete(authenticate, async (req: Request, res: Response) => {
         await userController.delete(req, res);
+      });
+
+    this.router
+      .route('/:id/rename')
+      .patch(authenticate, async (req: Request, res: Response) => {
+        await userController.rename(req, res);
+      });
+
+    this.router
+      .route('/:id/password')
+      .patch(authenticate, async (req: Request, res: Response) => {
+        await userController.changePassword(req, res);
       });
   }
 }

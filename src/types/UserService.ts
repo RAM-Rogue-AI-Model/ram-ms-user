@@ -12,7 +12,6 @@ interface RegisterUserBody {
 }
 
 interface UpdateUserBody {
-  id: string;
   password: string;
   username?: string;
   newPassword?: string;

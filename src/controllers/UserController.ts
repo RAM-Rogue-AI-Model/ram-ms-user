@@ -178,8 +178,9 @@ class UserController {
 
   async rename(req: Request, res: Response) {
     try {
+      const id = req.params.id as string;
       const body = req.body as UpdateUserBody;
-      if (!body.id || !body.username || !body.password) {
+      if (!id || !body.username || !body.password) {
         res.sendStatus(400);
         return;
       }
@@ -187,7 +188,6 @@ class UserController {
       const username = body.username.trim();
       const password = body.username.trim();
 
-      const id = body.id;
       const userExisted = await this.service.getById(id);
       if (!userExisted) {
         res.sendStatus(404);
@@ -219,18 +219,13 @@ class UserController {
 
   async changePassword(req: Request, res: Response) {
     try {
+      const id = req.params.id as string;
       const body = req.body as UpdateUserBody;
-      if (
-        !body.id ||
-        !body.password ||
-        !body.newPassword ||
-        !body.confirmPassword
-      ) {
+      if (!id || !body.password || !body.newPassword || !body.confirmPassword) {
         res.sendStatus(400);
         return;
       }
 
-      const id = body.id;
       const userExisted = await this.service.getById(id);
       if (!userExisted) {
         res.sendStatus(404);
@@ -238,6 +233,8 @@ class UserController {
       }
 
       const password = body.password.trim();
+      const newPassword = body.newPassword.trim();
+      const confirmPassword = body.confirmPassword.trim();
 
       bcrypt.compare(password, userExisted.password, (err, match) => {
         if (err) {
@@ -249,9 +246,6 @@ class UserController {
           res.sendStatus(401);
           return;
         }
-
-        const newPassword = body.newPassword.trim();
-        const confirmPassword = body.confirmPassword.trim();
 
         if (newPassword.length < 8 || newPassword !== confirmPassword) {
           res.sendStatus(400);
