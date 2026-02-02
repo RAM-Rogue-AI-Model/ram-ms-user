@@ -1,4 +1,4 @@
-import { CreateUserInput } from '../types/UserService';
+import { CreateUserInput, UpdateUserQuery } from '../types/UserService';
 import { prisma } from '../utils/mariaConnection';
 
 class UserService {
@@ -27,8 +27,8 @@ class UserService {
     });
   }
 
-  async update(id: string, data: CreateUserInput) {
-    const dataSecured: CreateUserInput = { ...data };
+  async update(id: string, data: UpdateUserQuery) {
+    const dataSecured: UpdateUserQuery = { ...data };
     return prisma.user.update({
       where: {
         id: id,

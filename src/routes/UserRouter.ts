@@ -8,11 +8,7 @@ class UserRouter {
 
   constructor(userController: UserController) {
     this.router = express.Router();
-    this.router
-      .route('/')
-      .get(authenticate, async (req: Request, res: Response) => {
-        await userController.list(req, res);
-      });
+
     this.router
       .route('/register')
       .post(
@@ -32,18 +28,27 @@ class UserRouter {
           await userController.login(req, res);
         }
       );
+
+    this.router
+      .route('/rename')
+      .patch(authenticate, async (req: Request, res: Response) => {
+        await userController.rename(req, res);
+      });
+
+    this.router
+      .route('/password')
+      .patch(authenticate, async (req: Request, res: Response) => {
+        await userController.changePassword(req, res);
+      });
+
     this.router
       .route('/:id')
       .post(authenticate, async (req: Request, res: Response) => {
-        await userController.getOne(req, res);
-      })
-      .put(authenticate, async (req: Request, res: Response) => {
-        await userController.update(req, res);
+        await userController.findOne(req, res);
       })
       .delete(authenticate, async (req: Request, res: Response) => {
         await userController.delete(req, res);
-      })
-
+      });
   }
 }
 

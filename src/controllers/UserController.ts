@@ -3,7 +3,11 @@ import { Request, Response } from 'express';
 import jwt, { SignCallback } from 'jsonwebtoken';
 
 import { UserService } from '../services/UserService';
-import { CreateUserInput, RegisterUserBody } from '../types/UserService';
+import {
+  CreateUserInput,
+  RegisterUserBody,
+  UpdateUserBody,
+} from '../types/UserService';
 import { config } from '../utils/config';
 
 class UserController {
@@ -157,7 +161,7 @@ class UserController {
     }
   }
 
-  async getOne(req: Request, res: Response) {
+  async findOne(req: Request, res: Response) {
     try {
       const id: string = req.params.id as string;
       const user = await this.service.getById(id);
@@ -174,22 +178,103 @@ class UserController {
     }
   }
 
-  async update(req: Request, res: Response) {
-    const id: string = req.params.id as string;
-    const body = req.body as Partial<CreateUserInput>;
-    if (!id) {
-      return res.status(400).json({ error: 'Missing user id' });
+  async rename(req: Request, res: Response) {
+    try {
+      const body = req.body as UpdateUserBody;
+      if (!body.id || !body.username || !body.password) {
+        res.sendStatus(400);
+        return;
+      }
+
+      const username = body.username.trim();
+      const password = body.username.trim();
+
+      const id = body.id;
+      const userExisted = await this.service.getById(id);
+      if (!userExisted) {
+        res.sendStatus(404);
+        return;
+      }
+
+      bcrypt.compare(password, userExisted.password, async (err, match) => {
+        if (err) {
+          res.sendStatus(500);
+          return;
+        }
+
+        if (!match) {
+          res.sendStatus(401);
+          return;
+        }
+
+        const userEdited = await this.service.update(id, {
+          username: username,
+        });
+        res.json(userEdited);
+      });
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+      return;
     }
-    const userExists = await this.service.getById(id);
-    if (!userExists) {
-      return res.status(404).json({ error: 'User not found' });
+  }
+
+  async changePassword(req: Request, res: Response) {
+    try {
+      const body = req.body as UpdateUserBody;
+      if (
+        !body.id ||
+        !body.password ||
+        !body.newPassword ||
+        !body.confirmPassword
+      ) {
+        res.sendStatus(400);
+        return;
+      }
+
+      const id = body.id;
+      const userExisted = await this.service.getById(id);
+      if (!userExisted) {
+        res.sendStatus(404);
+        return;
+      }
+
+      const password = body.password.trim();
+
+      bcrypt.compare(password, userExisted.password, (err, match) => {
+        if (err) {
+          res.sendStatus(500);
+          return;
+        }
+
+        if (!match) {
+          res.sendStatus(401);
+          return;
+        }
+      });
+
+      const newPassword = body.password.trim();
+      const confirmPassword = body.confirmPassword.trim();
+
+      if (newPassword.length < 8 || newPassword !== confirmPassword) {
+        res.sendStatus(400);
+        return;
+      }
+
+      bcrypt.hash(newPassword, config.SALT_ROUNDS, async (err, hash) => {
+        if (err) {
+          res.sendStatus(500);
+          return;
+        }
+
+        await this.service.update(id, { password: hash });
+        res.sendStatus(200);
+      });
+    } catch (err) {
+      console.error(err);
+      res.sendStatus(500);
+      return;
     }
-    if (!body.username || !body.password) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-    const payload: CreateUserInput = body as CreateUserInput;
-    const updatedUser = await this.service.update(id, payload);
-    res.json(updatedUser);
   }
 
   async delete(req: Request, res: Response) {
@@ -199,10 +284,6 @@ class UserController {
     }
     await this.service.delete(id);
     res.status(204).send();
-  }
-
-  async list(req: Request, res: Response) {
-
   }
 }
 
