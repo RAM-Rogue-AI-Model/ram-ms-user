@@ -33,7 +33,6 @@ class UserController {
   }
 
   async register(req: Request, res: Response) {
-    console.log(config.SALT_ROUNDS)
     const body = req.body as Partial<RegisterUserBody>;
     if (!body.username || !body.password || !body.confirmPassword) {
       res.status(400).send({ message: 'Bad request' });
@@ -50,19 +49,13 @@ class UserController {
       res.status(400).send({ message: 'Different password' });
     } else {
       try {
-        console.log("Test")
-
         const users = await this.service.findByUsername(username);
 
-        console.log("Test2")
-
         if (users.length > 0) {
-          console.log(users)
+          console.error("User already exists")
           res.status(400).send({ message: 'Username already used' });
           return;
         }
-
-        console.log("find ok")
 
         bcrypt.hash(password, config.SALT_ROUNDS, async (err, hash) => {
           if (err) {
