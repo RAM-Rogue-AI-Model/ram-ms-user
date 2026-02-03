@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: ${DATABASE_PASSWORD:-ram_password}
-      MARIADB_DATABASE: ram-ms-user-db
+      MARIADB_DATABASE: ${DATABASE_DB_NAME:-ram-ms-user-db}
       MARIADB_USER: ${DATABASE_USER:-user}
       MARIADB_PASSWORD: ${DATABASE_PASSWORD:-ram_password}
     ports:
