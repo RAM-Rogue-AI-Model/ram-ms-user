@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "fixer": "pnpm format && pnpm lint --fix",
-    "prisma:generate": "prisma generate",
+    "prisma:generate": "npx prisma generate",
     "postinstall": "prisma generate"
   },
   "keywords": [],

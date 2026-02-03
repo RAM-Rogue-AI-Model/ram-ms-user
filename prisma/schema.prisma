@@ -14,9 +14,9 @@ datasource db {
 }
 
 model User {
-  id               String   @id @default(uuid())
-  username         String   @unique
-  password         String
-  isAdmin          Boolean  @default(false)
+  id                String   @id @default(uuid())
+  username          String   @unique
+  password          String
+  isAdmin           Boolean  @default(false)
   registration_date DateTime @default(now())
 }

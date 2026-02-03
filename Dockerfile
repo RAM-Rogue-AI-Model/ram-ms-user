@@ -7,9 +7,13 @@ RUN npm install -g pnpm@10.13.1 tsx
 
 COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma
+COPY src ./src
+COPY prisma.config.ts tsconfig.json ./
 
-RUN pnpm install --frozen-lockfile && pnpm prisma:generate
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-CMD ["tsx", "src/app.ts"]
+RUN chmod +x entrypoint.sh
+
+CMD ["./entrypoint.sh"]
