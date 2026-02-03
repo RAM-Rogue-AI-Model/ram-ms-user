@@ -17,6 +17,8 @@ const config: configType = {
   SALT_ROUNDS: process.env.SALT_ROUNDS ? Number(process.env.SALT_ROUNDS) : 10,
   JWT_SECRET: process.env.JWT_SECRET ?? 'ram-user-secret-jwt-token',
   INTERNAL_SECRET: process.env.INTERNAL_SECRET ?? 'internal_secret',
+  RABBITMQ_URL:
+    process.env.RABBITMQ_URL ?? 'amqp://guest:guest@rabbitmq_test:5672',
 };
 
 export { config };
