@@ -10,12 +10,12 @@ services:
     env_file:
       - .env
     depends_on:
-      db:
+      user-db:
         condition: service_healthy
     networks:
       - ram-shared-network
 
-  db:
+  user-db:
     image: mariadb:latest
     container_name: ram-ms-user-db
     restart: unless-stopped

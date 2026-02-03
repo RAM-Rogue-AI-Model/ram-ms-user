@@ -10,10 +10,12 @@ COPY prisma ./prisma
 COPY src ./src
 COPY prisma.config.ts tsconfig.json ./
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile && npx prisma generate
 
 COPY . .
 
-RUN chmod +x entrypoint.sh
+RUN chown -R node:node /app && chmod +x entrypoint.sh
+USER node
+EXPOSE 3008
 
 CMD ["./entrypoint.sh"]
