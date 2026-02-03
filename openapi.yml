@@ -1,0 +1,277 @@
+openapi: 3.0.0
+info:
+  title: API Utilisateur
+  version: 1.0.0
+  description: |
+    API de gestion des utilisateurs (inscription, connexion, gestion du profil, suppression, etc.).
+    Tous les endpoints nécessitent l'en-tête `x-internal-secret` pour la communication gateway <-> microservice.
+servers:
+  - url: http://localhost:3009
+    description: Serveur local
+
+components:
+  securitySchemes:
+    InternalSecret:
+      type: apiKey
+      in: header
+      name: x-internal-secret
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        isAdmin:
+          type: boolean
+        registration_date:
+          type: string
+          format: date-time
+    RegisterUserBody:
+      type: object
+      required:
+        - username
+        - password
+        - confirmPassword
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        confirmPassword:
+          type: string
+    LoginUserBody:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    UpdateUserBody:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        newPassword:
+          type: string
+        confirmPassword:
+          type: string
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+security:
+  - InternalSecret: []
+
+tags:
+  - name: Utilisateur
+    description: Opérations sur les utilisateurs
+
+paths:
+  /user/register:
+    post:
+      tags:
+        - Utilisateur
+      summary: Inscription d'un nouvel utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserBody'
+      responses:
+        '200':
+          description: Utilisateur inscrit avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Requête invalide ou utilisateur déjà existant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - InternalSecret: []
+  /user/login:
+    post:
+      tags:
+        - Utilisateur
+      summary: Connexion d'un utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserBody'
+      responses:
+        '200':
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Mauvais identifiants ou utilisateur inexistant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Mot de passe incorrect
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - InternalSecret: []
+  /user/{id}:
+    post:
+      tags:
+        - Utilisateur
+      summary: Récupérer un utilisateur par son id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Utilisateur trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Utilisateur non trouvé
+        '500':
+          description: Erreur serveur
+      security:
+        - InternalSecret: []
+    delete:
+      tags:
+        - Utilisateur
+      summary: Supprimer un utilisateur par son id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Utilisateur supprimé
+        '400':
+          description: Id manquant
+        '500':
+          description: Erreur serveur
+      security:
+        - InternalSecret: []
+  /user/{id}/rename:
+    patch:
+      tags:
+        - Utilisateur
+      summary: Renommer un utilisateur
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Utilisateur renommé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Requête invalide
+        '401':
+          description: Mot de passe incorrect
+        '404':
+          description: Utilisateur non trouvé
+        '500':
+          description: Erreur serveur
+      security:
+        - InternalSecret: []
+  /user/{id}/password:
+    patch:
+      tags:
+        - Utilisateur
+      summary: Changer le mot de passe d'un utilisateur
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+                - newPassword
+                - confirmPassword
+              properties:
+                password:
+                  type: string
+                newPassword:
+                  type: string
+                confirmPassword:
+                  type: string
+      responses:
+        '200':
+          description: Mot de passe changé
+        '400':
+          description: Requête invalide ou mot de passe trop court
+        '401':
+          description: Mot de passe incorrect
+        '404':
+          description: Utilisateur non trouvé
+        '500':
+          description: Erreur serveur
+      security:
+        - InternalSecret: []
