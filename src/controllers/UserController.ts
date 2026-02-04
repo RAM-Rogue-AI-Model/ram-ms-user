@@ -45,9 +45,7 @@ class UserController {
 
     if (password.length < 8) {
       res.status(400).send({ message: 'Password too short' });
-    } else if (password !== confirmPassword) {
-      res.status(400).send({ message: 'Different password' });
-    } else {
+    } else if (password === confirmPassword) {
       try {
         const users = await this.service.findByUsername(username);
 
@@ -99,6 +97,8 @@ class UserController {
         res.status(500).send({ message: err });
         return;
       }
+    } else {
+      res.status(400).send({ message: 'Different password' });
     }
   }
 
