@@ -1,15 +1,16 @@
 import 'dotenv/config';
 
+import fs from 'node:fs';
+
 import cors from 'cors';
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
+import * as YAML from 'yaml';
 
 import { UserController } from './controllers/UserController';
 import { UserRouter } from './routes/UserRouter';
 import { UserService } from './services/UserService';
 import { config } from './utils/config';
-import fs from 'node:fs';
-import * as YAML from 'yaml';
-import swaggerUi from 'swagger-ui-express';
 
 const app = express();
 const port = config.PORT;
@@ -36,5 +37,6 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log(`Server is running on http://localhost:${port}`);
+  // eslint-disable-next-line no-console
   console.log(`docs available at http://localhost:${port}/docs`);
 });

@@ -52,14 +52,14 @@ class UserController {
         const users = await this.service.findByUsername(username);
 
         if (users.length > 0) {
-          console.error("User already exists")
+          console.error('User already exists');
           res.status(400).send({ message: 'Username already used' });
           return;
         }
 
         bcrypt.hash(password, config.SALT_ROUNDS, async (err, hash) => {
           if (err) {
-            console.log(err)
+            console.error(err);
             res.sendStatus(500);
             return;
           }
