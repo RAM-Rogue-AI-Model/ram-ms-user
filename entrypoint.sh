@@ -1,3 +1,7 @@
+#!/bin/sh
+
+echo "🚀 Démarrage du conteneur..."
+
 # Boucle de sécurité : Attendre que la DB soit vraiment prête pour Prisma
 # Parfois le healthcheck Docker est OK mais la socket n'est pas prête pour une migration
 echo "🔄 Tentative de migration Prisma..."
@@ -16,6 +20,5 @@ done
 
 echo "✅ Migrations appliquées avec succès."
 
-# Démarrage de l'application
-# exec permet de remplacer le processus shell par node (PID 1), essentiel pour recevoir les signaux d'arrêt (SIGTERM)
 echo "🔥 Lancement de l'application..."
+exec tsx src/app.ts
