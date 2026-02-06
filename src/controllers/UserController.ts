@@ -57,7 +57,7 @@ class UserController {
 
         bcrypt.hash(password, config.SALT_ROUNDS, async (err, hash) => {
           if (err) {
-            console.error(err)
+            console.error(err);
             res.sendStatus(500);
             return;
           }
